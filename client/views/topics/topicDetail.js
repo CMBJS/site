@@ -1,0 +1,2 @@
+Template.topicDetail.rendered = function() {
+};

@@ -1,0 +1,24 @@
+<template name="_presentation">
+  <div class="thumbnail presentation-item">
+    <a href="{{ pathFor 'presentationDetail' }}" class="presentation-thumbnail">
+      {{#if this.thumbnail}}
+        <img src="{{this.thumbnail}}" class="img-responsive">
+      {{else}}
+        {{#if this.oembed }}
+          {{#if this.oembed.code }}
+            {{{this.oembed.code}}}
+          {{/if}}
+        {{else}}
+        <img src="/meteor-black.png">
+        {{/if}}
+      {{/if}}
+    </a>
+    <div class="caption">
+      <h3><a href="{{ pathFor 'presentationDetail' }}">{{this.title}}</a></h3>
+      <h5 class="text-muted">
+        {{> _profilePhotoCircular this.presenter._id}} By {{this.presenter.name}}
+      </h5>
+      <a href="{{ pathFor 'presentationDetail' }}" class="btn btn-default btn-block" role="button">View</a>
+    </div>
+  </div>
+</template>

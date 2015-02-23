@@ -1,0 +1,61 @@
+<template name="memberDetail">
+
+  {{#with member}}
+    <div class="jumbotron member-header">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-2">
+            <img class="img-circle" src="{{profile.thumbnailUrl}}" width="150" height="150">
+          </div>
+          <div class="col-md-10">
+            <h1>{{profile.name}}</h1>
+            <p>{{ truncate profile.bio 140 }}</p>
+            <ul class="list-inline">
+              <li><span class="label label-primary">+{{profile.points}} Points</span></li>
+              {{#each profile.socialLinks}}
+                <li><a href="{{url}}" target="_blank"><i class="ion-social-{{service}}"></i></a></li>
+              {{/each}}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  {{/with}}
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-9">
+        <h4 class="sub-header"><i class="ion-social-rss"></i> Activity</h4>
+        {{#if member.activities.count}}
+        <div class="list-group">
+          {{#each member.activities}}
+            <a href="{{ subjectURL }}" class="list-group-item"><i class="{{ icon }}"></i> {{ actionDescription }} <strong>{{ subjectTitle }}</strong> <span class="label label-primary pull-right">+{{pointsAwarded}} Points</span></a>
+          {{/each}}
+        </div>
+        {{else}}
+          <div class="alert alert-info">
+            <p>
+              {{member.profile.name}} hasn't gained any activity points yet!
+            </p>
+          </div>
+       {{/if}}
+      </div>
+
+      <div class="col-md-3">
+        {{#with member}}
+          <h4 class="sub-header">About {{profile.name}}</h4>
+          {{#each profile.answers }}
+            <p>
+              <strong>{{question}}</strong>
+              <br>
+              {{answer}}
+            </p>
+          {{/each}}
+        {{/with}}
+      </div>
+
+    </div>
+  </div>
+
+</template>

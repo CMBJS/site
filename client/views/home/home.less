@@ -1,0 +1,57 @@
+@import '../../stylesheets/mixins.import.less';
+@import '../../stylesheets/variables.import.less';
+
+.jumbotron.jumbotron-home {
+  background: @brand-primary url("/homepage-banner.png") center center no-repeat;
+  background-size: cover;
+  background-blend-mode: overlay;
+  color: #fff;
+  padding: 86px 0;
+  text-align: center;
+
+  .home-logo {
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: @font-size-h3;
+  }
+
+  p {
+    font-size: @font-size-large;
+    color: lighten(@brand-primary, 30%);
+  }
+
+  .btn-primary {
+    background: #1c1c1c;
+  }
+}
+
+.homepage-section {
+  text-align: center;
+  padding: 48px 0;
+}
+
+.homepage-section-meetups {
+  padding-top: 0;
+  text-align: left;
+
+  h3 {
+    text-align: center;
+    font-size: 32px;
+  }
+
+  h2 {
+    margin-top: 0;
+  }
+}
+
+.homepage-section-members {
+  background: @gray-lighter;
+
+  .top-members a {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+  }
+}

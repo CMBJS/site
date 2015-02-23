@@ -1,0 +1,79 @@
+<template name="presentationDetail">
+
+  <div class="jumbotron">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="embed-responsive embed-responsive-16by9">
+            {{#if presentation.oembed}}
+              {{{presentation.oembed.code}}}
+            {{else}}
+              {{#if presentation.thumbnail}}
+                <img src="{{presentation.thumbnail}}" class="img-responsive">
+              {{else}}
+                <div class="presentation-item well">
+                  <img src="/meteor-black.png">
+                </div>
+              {{/if}}
+            {{/if}}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h2>{{presentation.title}}</h2>
+          <h5 class="text-muted">
+            {{#if presentation.oembed}}
+              {{#with presentation.oembed}}
+                {{#if author_name}}
+                  <a href="{{author_url}}">{{> _profilePhotoCircular "default"}} Author: {{author_name}}</a>
+                  <br/><br/>
+                {{/if}}
+              {{/with}}
+            {{/if}}
+            <a href="{{ pathFor 'memberDetail' _id=presentation.presenter._id }}">{{> _profilePhotoCircular presentation.presenter._id}} Added By: {{presentation.presenter.name}}</a>
+          </h5>
+          <p>{{presentation.description}}</p>
+          <p>
+            {{> likesWidget presentation}}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-10 col-md-push-1">
+        <ol class="breadcrumb">
+          <li><a href="{{ pathFor 'presentations' }}">All Presentations</a></li>
+          <li class="active">{{ truncate presentation.title 20 }}</li>
+        </ol>
+
+        <div class="page-header">
+          {{#if currentUser}}
+            <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#new-comment-modal">
+              <i class="ion-plus"></i> Add a Comment
+            </button>
+          {{/if}}
+          <h3>Comments</h3>
+        </div>
+
+        <ul class="media-list">
+          {{#each comments}}
+            {{> _comment}}
+          {{/each}}
+        </ul>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="new-comment-modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        {{> _commentForm parentType="presentation" parentId=presentation._id parentTitle=presentation.title}}
+      </div>
+    </div>
+  </div>
+
+</template>

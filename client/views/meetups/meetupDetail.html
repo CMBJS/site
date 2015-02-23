@@ -1,0 +1,241 @@
+<template name="meetupDetail">
+
+  <div class="jumbotron">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-3">
+          <div class="panel panel-default panel-calendar text-center">
+            <div class="panel-heading">
+              {{ calendarDay meetup.dateTime}}
+            </div>
+            <div class="panel-body">
+              <h1>{{ calendarDate meetup.dateTime}}</h1>
+            </div>
+            <div class="panel-footer">
+              {{ calendarMonth meetup.dateTime}}
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-9">
+          <h2>{{ meetup.title }}</h2>
+
+          <h5 class="text-muted">
+            <i class="ion-calendar"></i> {{ longDate meetup.dateTime}}
+          </h5>
+          <div class="meetup-description-html">
+            {{{ meetup.description }}}
+          </div>
+          {{#unless meetup.isPast}}
+            <p>
+              {{#if currentUserIsAttendee}}
+                <button type="button" class="btn btn-primary btn-lg" disabled><i class="ion-checkmark"></i> Going</button>
+              {{else}}
+                {{#if currentUser}}
+                    <button type="button" class="btn btn-primary btn-lg" data-action="rsvp"><i class="ion-plus"></i> RSVP</button>
+                {{else}}
+                    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#login-required-modal"><i class="ion-plus"></i> RSVP</button>
+                {{/if}}
+              {{/if}}
+              {{#each meetup.truncatedAttendees}}
+                <a href="{{ pathFor 'memberDetail' }}" title="{{ profile.name }}" data-toggle="tooltip"><img class="img-circle" width=30 height=30 src="{{profile.thumbnailUrl}}"></a>
+              {{/each}}
+              {{#if displayOverflowAttendees}}
+                <small>and {{ meetup.numberOfOverflowAttendees }} more are going</small>
+              {{/if}}
+            </p>
+          {{/unless}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <ol class="breadcrumb">
+      <li><a href="{{ pathFor 'meetups' }}">All Meetups</a></li>
+      <li class="active">{{ meetup.title }}</li>
+    </ol>
+  </div>
+
+  <div class="container">
+    {{#if isInRole 'admin'}}
+      <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#add-topic-modal">Add Topic</button>
+    {{/if}}
+    <h3>Topics</h3>
+
+    {{#if meetup.topics.count}}
+      {{#each meetup.topics}}
+        <div class="media">
+          {{#with presenter}}
+            <a class="pull-left" href="#">
+              <img class="media-object img-rounded img-thumbnail" src="{{ profile.thumbnailUrl }}" width="150" height="150">
+            </a>
+          {{/with}}
+          <div class="media-body">
+            <h4 class="media-heading">
+              <a href="{{ pathFor 'topicDetail' }}">{{ title }}</a>
+            </h4>
+            {{#with presenter}}
+              <h5 class="text-muted">Presented by <a href="{{ pathFor 'memberDetail' }}">{{ profile.name }}</a></h5>
+            {{/with}}
+            <p>
+              {{ description }}
+            </p>
+            <ul class="list-inline text-muted">
+              {{#with author}}
+                <li><a href="{{ pathFor 'memberDetail' }}">Suggested by {{profile.name}}</a></li>
+              {{/with}}
+              {{#if numberOfComments}}
+                <li><a href="{{ pathFor 'topicDetail' }}">{{numberOfComments}} Comments</a></li>
+              {{/if}}
+            </ul>
+          </div>
+        </div>
+      {{/each}}
+
+      <br>
+
+      <p class="text-center">
+        <a href="{{ pathFor 'topics' }}" class="btn btn-default btn-lg"><i class="ion-ios7-chatbubble"></i> Suggest a Topic</a>
+      </p>
+    {{else}}
+      <div class="alert alert-info">
+        <p>
+          There are no topics for this meetup yet. <a href="{{ pathFor 'topics' }}">Suggest one?</a>
+        </p>
+      </div>
+    {{/if}}
+    <br>
+  </div>
+
+  <div class="jumbotron">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="embed-responsive embed-responsive-16by9">
+            <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCGdAs2xESY5hbra99lodGRyypT0yWV7Kk&q={{ urlEncode meetup.location.address}}"></iframe>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h4>{{ meetup.location.name }}</h4>
+          <h5 class="text-muted">
+            <a href="https://www.google.com/maps/place/{{ urlEncode meetup.location.address}}" target="_blank"><i class="ion-ios7-location"></i> {{ meetup.location.address }}</a>
+          </h5>
+          <p>
+            {{ meetup.location.description }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container text-center meetup-attendees">
+    <h3>{{ attendeesHeading }}</h3>
+    <hr>
+    <p>
+      {{#each meetup.attendees}}
+        <a href="{{ pathFor 'memberDetail' }}" data-toggle="tooltip" title="{{ profile.name }}"><img class="img-circle" src="{{profile.thumbnailUrl}}" width=100 height=100></a>
+      {{/each}}
+    </p>
+    <hr>
+    <p>
+      {{#unless meetup.isPast}}
+        {{#if currentUserIsAttendee}}
+          <button type="button" class="btn btn-primary btn-lg" disabled><i class="ion-checkmark"></i> You're Going</button>
+        {{else}}
+          <button type="button" class="btn btn-primary btn-lg" data-action="rsvp"><i class="ion-plus"></i> RSVP</button>
+        {{/if}}
+      {{/unless}}
+    </p>
+  </div>
+
+  {{#if isInRole 'admin'}}
+    <div class="modal fade" id="add-topic-modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form data-action="add-topic">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Add a Topic</h4>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="topic">Choose a suggested topic</label>
+                <select class="form-control" id="topic" name="topicId">
+                  <option value="">Choose a topic</option>
+                  {{#each suggestedTopics}}
+                    <option value="{{ _id }}">{{ title }}</option>
+                  {{/each}}
+                </select>
+              </div>
+              <hr>
+              <h5>Or create a new topic:</h5>
+              <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" id="title" name="customTitle" placeholder="Enter a title for your topic">
+              </div>
+              <div class="form-group">
+                <label for="description">Description</label>
+                <textarea rows="2" class="form-control" id="description" name="customDescription" placeholder="Enter a description for your topic"></textarea>
+              </div>
+              <hr>
+              <div class="form-group">
+                <label for="presenter">Presenter</label>
+                <select class="form-control" id="presenter" name="presenterId">
+                  <option value="">Choose a member</option>
+                  {{#each members}}
+                    <option value="{{ _id }}">{{ profile.name }}</option>
+                  {{/each}}
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  {{/if}}
+
+  <div class="modal fade" id="login-required-modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Login Required</h4>
+        </div>
+        <div class="modal-body text-center">
+          <p>
+            Sign in with Meetup to RSVP!
+          </p>
+          <p>
+            <button type="button" class="btn btn-primary" data-login-with="meetup">
+              <img src="/meetup.png" width=22 height=22> Sign In
+            </button>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="not-a-member-modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Not a member</h4>
+        </div>
+        <div class="modal-body">
+          <p>You are not a member of this meetup group yet!<br/>
+            Please <a href="{{ groupUrl }}" target="_blank">join this group on Meetup.com</a> before RSVPing.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</template>

@@ -1,0 +1,34 @@
+<template name="_topic">
+  <div class="media">
+    {{#if alreadyVoted}}
+      <button type="button" class="btn btn-primary btn-lg pull-left btn-vote" disabled>
+        <i class="ion-checkmark"></i>
+      </button>
+    {{else}}
+      <button type="button" class="btn btn-default btn-lg pull-left btn-vote" data-vote>
+        <i class="ion-arrow-up-c"></i>
+      </button>
+    {{/if}}
+    <div class="media-body">
+      <h4 class="media-heading"><a href="{{ pathFor 'topicDetail' }}">{{ title }}</a></h4>
+      <p>{{ description }}</p>
+      <ul class="list-inline">
+        {{#with author}}
+          <li><a href="{{ pathFor 'memberDetail' }}"><img class="img-circle" width=30 height=30 src="{{profile.thumbnailUrl}}"> By {{profile.name}}</a></li>
+        {{/with}}
+        <li>{{ points }} Points</li>
+        {{#if hasComments}}
+          <li><a href="{{ pathFor 'topicDetail' }}">{{numberOfComments}} Comments</a></li>
+        {{/if}}
+        {{#if presented}}
+          {{#with meetup}}
+            <li><a href="{{ pathFor 'meetupDetail' }}"><i class="ion-checkmark"></i> Presented</a></li>
+          {{/with}}
+        {{/if}}
+        {{#if isInRole 'admin'}}
+          <li><button type="button" class="btn btn-default btn-xs" data-remove>Remove</button></li>
+        {{/if}}
+      </ul>
+    </div>
+  </div>
+</template>
